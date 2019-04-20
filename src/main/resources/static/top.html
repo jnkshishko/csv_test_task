@@ -1,0 +1,19 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Top Table</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+    <table>
+        <tr>
+            <th>Sr. No</th>
+            <th>Place</th>
+        </tr>
+        <tr th:each="top, iterationstatus : ${topList}">
+            <td th:text="${iterationstatus.count}">1</td>
+            <td th:text="${top}"> Place </td>
+        </tr>
+    </table>
+</body>
+</html>

@@ -1,6 +1,5 @@
 package com.test.csv.dao.impl;
 
-import com.test.csv.dao.repository.EventRepository;
 import com.test.csv.entity.Event;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -9,8 +8,10 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
-public class EventRepositoryImpl implements EventRepository {
+public class EventRepositoryImpl {
 
     private NamedParameterJdbcTemplate template;
 
@@ -18,9 +19,9 @@ public class EventRepositoryImpl implements EventRepository {
         this.template = template;
     }
 
-    @Override
     public void insert(Event event) {
-        final String sql = "INSERT INTO public.CSV (SSOID, TS, GRP, TYPE_, SUB_TYPE, URL, ORG_ID, FORM_ID, CODE, LTPA, SUDIRRESPONSE, YMDH) VALUES (:ssoid, :ts, :grp, :type_, :sub_type, :url, :org_id, :form_id, :code, :lpta, :sudirresponse, :ymdh)";
+        final String sql = "INSERT INTO CSV (SSOID, TS, GRP, TYPE_, SUB_TYPE, URL, ORG_ID, FORM_ID, CODE, LTPA, SUDIRRESPONSE, YMDH) " +
+                "VALUES (:ssoid, :ts, :grp, :type_, :sub_type, :url, :org_id, :form_id, :code, :lpta, :sudirresponse, :ymdh)";
         KeyHolder holder = new GeneratedKeyHolder();
         SqlParameterSource param = new MapSqlParameterSource()
                 .addValue("ssoid", event.getSsoid())
@@ -37,4 +38,19 @@ public class EventRepositoryImpl implements EventRepository {
                 .addValue("ymdh", event.getYmdh());
         template.update(sql, param, holder);
     }
+
+    public List<Event> getEventsForLastHour(Long from, Long to) {
+        final String sql = "SELECT * FROM csv c " +
+                "WHERE c.ts IN (:from, :to)";
+
+        SqlParameterSource param = new MapSqlParameterSource()
+                .addValue("from", from)
+                .addValue("to", to);
+        return template.queryForList(sql, param, Event.class);
+    }
+
+    public void insert2(Event event) {
+//        eventRepository.insert(event);
+    }
+
 }

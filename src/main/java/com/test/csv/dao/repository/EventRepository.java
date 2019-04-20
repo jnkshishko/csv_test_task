@@ -2,9 +2,23 @@ package com.test.csv.dao.repository;
 
 
 import com.test.csv.entity.Event;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
 
-public interface EventRepository {
+import java.util.List;
 
-    void insert(Event event);
+public interface EventRepository extends CrudRepository<Event, String> {
 
+//    void insert2(Event event);
+//
+//    @Query(
+//            value = "SELECT * FROM csv c where c.ts in (?1, ?2)",
+//    nativeQuery = true)
+//    List<Event> getEventsForLastHour(Long from, Long to);
+
+    @Query(
+            value = "SELECT count(form_id) as c, form_id FROM csv WHERE form_id NOT LIKE '' " +
+                    "GROUP BY form_id ORDER BY c DESC LIMIT 5",
+    nativeQuery = true)
+    List<String> topFive();
 }

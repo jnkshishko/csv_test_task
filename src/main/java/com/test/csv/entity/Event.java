@@ -4,47 +4,58 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "CSV", schema = "public")
+@Table(name = "csv")
 public class Event {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Column(name = "SSOID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private long id;
+
+    @Column(name = "ssoid")
     private String ssoid;
 
-    @Column(name = "TS")
+    @Column(name = "ts")
     private Long ts;
 
-    @Column(name = "GRP")
+    @Column(name = "grp")
     private String grp;
 
-    @Column(name = "TYPE_")
+    @Column(name = "type_")
     private String type;
 
-    @Column(name = "SUB_TYPE")
+    @Column(name = "sub_type")
     private String subtype;
 
-    @Column(name = "URL")
+    @Column(name = "url")
     private String url;
 
-    @Column(name = "ORG_ID")
+    @Column(name = "org_id")
     private String orgId;
 
-    @Column(name = "FORM_ID")
+    @Column(name = "form_id")
     private String formId;
 
-    @Column(name = "CODE")
+    @Column(name = "code")
     private String code;
 
-    @Column(name = "LTPA")
+    @Column(name = "ltpa")
     private String ltpa;
 
-    @Column(name = "SUDIRRESPONSE")
+    @Column(name = "sudirresponse")
     private String sudirresponse;
 
-    @Column(name = "YMDH")
-    @Temporal(TemporalType.DATE)
+    @Column(name = "ymdh")
+    @Temporal(TemporalType.TIMESTAMP)
     private Date ymdh;
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public String getSsoid() {
         return ssoid;

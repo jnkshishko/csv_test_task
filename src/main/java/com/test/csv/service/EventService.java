@@ -2,6 +2,7 @@ package com.test.csv.service;
 
 import com.test.csv.dao.repository.EventRepository;
 import com.test.csv.dto.EventDto;
+import com.test.csv.dto.GroupEventDto;
 import com.test.csv.dto.TopFormDto;
 import com.test.csv.entity.Event;
 import org.slf4j.Logger;
@@ -9,12 +10,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.Normalizer;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static com.test.csv.utils.EventHelper.*;
 
 @Service
 public class EventService {
@@ -34,30 +34,23 @@ public class EventService {
             return;
         }
         for (EventDto dto : dtos) {
-            Event event = new Event();
-            event.setSsoid(dto.getSsoid());
-            event.setTs(dto.getTs());
-            event.setGrp(dto.getGrp());
-            event.setType(dto.getType());
-            event.setSubtype(dto.getSubtype());
-            event.setUrl(dto.getUrl());
-            event.setOrgId(dto.getOrgid());
-            event.setFormId(dto.getFormid());
-            event.setCode(dto.getCode());
-            event.setLtpa(dto.getLtpa());
-            event.setSudirresponse(dto.getSudirresponse());
-            Date date = new SimpleDateFormat("yyyy-MM-dd-HH").parse(dto.getYmdh());
-            event.setYmdh(date);
-            eventRepository.save(event);
+            eventRepository.save(copyDtoToEvent(dto));
         }
         LOG.debug("#EventService() saveAllEvents(): COMPLETE");
     }
 
-//    public List<Event> getUsersForLastHour() {
-//        Long to = dateToUnixTime(new Date());
-//        Long from = dateToUnixTime(new Date(System.currentTimeMillis() - 360000 * 1000));
-//        return eventRepositoryImpl.getEventsForLastHour(from, to);
-//    }
+    public List<EventDto> getUsersForLastHour() {
+        Long to = dateToUnixTime(new Date());
+        Long from = dateToUnixTime(new Date(System.currentTimeMillis() - 360000 * 1000));
+
+        List<Event> events = eventRepository.getEventsForLastHour(from, to);
+        List<EventDto> dtos = new ArrayList<>();
+        for (Event event : events) {
+            dtos.add(copyEventToDto(event));
+        }
+        return dtos;
+    }
+
     public List<TopFormDto> getTopForm() {
         List<String> list = eventRepository.topFive();
         List<TopFormDto> topForms = new ArrayList<>();
@@ -67,5 +60,36 @@ public class EventService {
             topForms.add(form);
         }
         return topForms;
+    }
+
+    public List<EventDto> getUnfinished() {
+        List<Event> events = eventRepository.getAll();
+        //групировка по SSOID
+        Map<String, List<Event>> map = events.stream()
+                .collect(Collectors.groupingBy(Event::getSsoid));
+        List<GroupEventDto> groupEventDtos = map.entrySet().stream().map(m -> new GroupEventDto(m.getKey(), m.getValue()))
+                .collect(Collectors.toList());
+        List<EventDto> dtos = new ArrayList<>();
+        //сортировка по времени
+        for (GroupEventDto groupEventDto : groupEventDtos) {
+            List<Event> sortResult;
+            sortResult = groupEventDto.getEvents().stream().sorted((Comparator.comparing(Event::getTs)))
+                    .collect(Collectors.toList());
+            groupEventDto.setEvents(sortResult);
+            boolean exists = true;
+            for (Event event : sortResult) {
+                if ("send".equals(event.getSubtype().trim())) {
+                    exists = true;
+                } else if ("success".equals(event.getSubtype().trim())) {
+                    exists = true;
+                } else {
+                    exists = false;
+                }
+            }
+            if (!exists) {
+                dtos.add(copyEventToDto(sortResult.stream().reduce((first, second) -> second).get()));
+            }
+        }
+        return dtos;
     }
 }

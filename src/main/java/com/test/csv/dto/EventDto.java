@@ -2,6 +2,7 @@ package com.test.csv.dto;
 
 public class EventDto {
 
+    private Long id;
     private String ssoid;
     private Long ts;
     private String grp;
@@ -18,7 +19,8 @@ public class EventDto {
     public EventDto() {
     }
 
-    public EventDto(String ssoid, Long ts, String grp, String type, String subtype, String url, String orgid, String formid, String code, String ltpa, String sudirresponse, String ymdh) {
+    public EventDto(Long id, String ssoid, Long ts, String grp, String type, String subtype, String url, String orgid, String formid, String code, String ltpa, String sudirresponse, String ymdh) {
+        this.id = id;
         this.ssoid = ssoid;
         this.ts = ts;
         this.grp = grp;
@@ -31,6 +33,14 @@ public class EventDto {
         this.ltpa = ltpa;
         this.sudirresponse = sudirresponse;
         this.ymdh = ymdh;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getSsoid() {

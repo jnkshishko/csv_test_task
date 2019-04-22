@@ -1,0 +1,28 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Top Table</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <style type="text/css">
+        .table {
+            border: 2px;
+            border-color: cornflowerblue;
+        }
+    </style>
+</head>
+<body>
+<table class="table">
+    <tr>
+        <th> SSOID </th>
+        <th> FORM_ID </th>
+    </tr>
+    <tr th:if="${dtos.empty}">
+        <td colspan="2"> No Users activity for last hour </td>
+    </tr>
+    <tr th:each="dto : ${dtos}">
+        <td th:text="${dto.ssoid}"> SSOID </td>
+        <td th:text="${dto.form_id}"> FORM_ID </td>
+    </tr>
+</table>
+</body>
+</html>

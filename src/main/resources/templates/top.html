@@ -7,12 +7,15 @@
 <body>
     <table>
         <tr>
-            <th>Sr. No</th>
-            <th>Place</th>
+            <th> # </th>
+            <th> Place </th>
+        </tr>
+        <tr th:if="${topList.empty}">
+            <td colspan="2"> No Forms Available </td>
         </tr>
         <tr th:each="top, iterationstatus : ${topList}">
-            <td th:text="${iterationstatus.count}">1</td>
-            <td th:text="${top}"> Place </td>
+            <td th:text="${iterationstatus.count}"> # </td>
+            <td th:text="${top.form_id}"> Place </td>
         </tr>
     </table>
 </body>

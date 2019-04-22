@@ -2,14 +2,17 @@ package com.test.csv.service;
 
 import com.test.csv.dao.repository.EventRepository;
 import com.test.csv.dto.EventDto;
+import com.test.csv.dto.TopFormDto;
 import com.test.csv.entity.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.Normalizer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -55,7 +58,14 @@ public class EventService {
 //        Long from = dateToUnixTime(new Date(System.currentTimeMillis() - 360000 * 1000));
 //        return eventRepositoryImpl.getEventsForLastHour(from, to);
 //    }
-    public List<String> getTopForm() {
-        return eventRepository.topFive();
+    public List<TopFormDto> getTopForm() {
+        List<String> list = eventRepository.topFive();
+        List<TopFormDto> topForms = new ArrayList<>();
+        for (String s : list) {
+            TopFormDto form = new TopFormDto();
+            form.setForm_id(s);
+            topForms.add(form);
+        }
+        return topForms;
     }
 }

@@ -17,8 +17,8 @@ public interface EventRepository extends CrudRepository<Event, String> {
 //    List<Event> getEventsForLastHour(Long from, Long to);
 
     @Query(
-            value = "SELECT count(form_id) as c, form_id FROM csv WHERE form_id NOT LIKE '' " +
-                    "GROUP BY form_id ORDER BY c DESC LIMIT 5",
+            value = "SELECT t.form_id FROM (SELECT count(form_id) as c, form_id FROM csv WHERE form_id NOT LIKE '' " +
+                    "GROUP BY form_id ORDER BY c DESC LIMIT 5) t",
     nativeQuery = true)
     List<String> topFive();
 }

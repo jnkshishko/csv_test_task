@@ -40,6 +40,7 @@ public class EventService {
     }
 
     public List<EventDto> getUsersForLastHour() {
+        LOG.debug("#EventService() getUsersForLastHour(): START");
         Long to = dateToUnixTime(new Date());
         Long from = dateToUnixTime(new Date(System.currentTimeMillis() - 360000 * 1000));
 
@@ -48,10 +49,12 @@ public class EventService {
         for (Event event : events) {
             dtos.add(copyEventToDto(event));
         }
+        LOG.debug("#EventService() getUsersForLastHour(): COMPLETE");
         return dtos;
     }
 
     public List<TopFormDto> getTopForm() {
+        LOG.debug("#EventService() getTopForm(): START");
         List<String> list = eventRepository.topFive();
         List<TopFormDto> topForms = new ArrayList<>();
         for (String s : list) {
@@ -59,10 +62,12 @@ public class EventService {
             form.setForm_id(s);
             topForms.add(form);
         }
+        LOG.debug("#EventService() getTopForm(): COMPLETE");
         return topForms;
     }
 
     public List<EventDto> getUnfinished() {
+        LOG.debug("#EventService() getUnfinished(): START");
         List<Event> events = eventRepository.getAll();
         //групировка по SSOID
         Map<String, List<Event>> map = events.stream()
@@ -90,6 +95,7 @@ public class EventService {
                 dtos.add(copyEventToDto(sortResult.stream().reduce((first, second) -> second).get()));
             }
         }
+        LOG.debug("#EventService() getUnfinished(): COMPLETE");
         return dtos;
     }
 }

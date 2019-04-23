@@ -9,6 +9,10 @@ public class TopFormDto {
     public TopFormDto() {
     }
 
+    public TopFormDto(String form_id) {
+        this.form_id = form_id;
+    }
+
     public String getForm_id() {
         return form_id;
     }
